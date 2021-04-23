@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sound/menuSound.wav</file>
+        <file>image/Base.png</file>
+        <file>image/about.jpg</file>
+        <file>image/Background.png</file>
+        <file>image/exit.png</file>
+        <file>image/Menu.jpg</file>
+        <file>image/menu.png</file>
+        <file>image/skelet/Attack.png</file>
+        <file>image/skelet/Dead.png</file>
+        <file>image/skelet/Skeleton Hit.png</file>
+        <file>image/skelet/Idle.png</file>
+        <file>image/skelet/Walk.png</file>
+        <file>image/skelet/Skeleton.png</file>
+        <file>image/archer/attack.png</file>
+        <file>image/archer/dead.png</file>
+        <file>image/archer/icon.png</file>
+        <file>image/archer/idle.png</file>
+        <file>image/archer/walk.png</file>
+    </qresource>
+</RCC>
