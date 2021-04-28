@@ -10,18 +10,22 @@ CONFIG += c++11
 
 SOURCES += \
     button.cpp \
+    computer.cpp \
+    effects.cpp \
     graphicsview.cpp \
     main.cpp \
     mainwindow.cpp \
-    target.cpp \
+    player.cpp \
     user.cpp \
     warrior.cpp
 
 HEADERS += \
     button.h \
+    computer.h \
+    effects.h \
     graphicsview.h \
     mainwindow.h \
-    target.h \
+    player.h \
     user.h \
     warrior.h
 
@@ -33,7 +37,8 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES +=
+DISTFILES += \
+    image/pause.png
 
 RESOURCES += \
     resourse.qrc

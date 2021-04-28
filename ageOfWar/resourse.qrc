@@ -18,5 +18,18 @@
         <file>image/archer/icon.png</file>
         <file>image/archer/idle.png</file>
         <file>image/archer/walk.png</file>
+        <file>image/pause.png</file>
+        <file>image/blood.png</file>
+        <file>image/moto.jpg</file>
+        <file>image/moto_cenz.jpg</file>
+        <file>image/defeat.png</file>
+        <file>image/Eren.jpg</file>
+        <file>image/gipo.jpg</file>
+        <file>image/bckg2.jpg</file>
+        <file>image/bckg3.jpg</file>
+        <file>image/bckg.jpg</file>
+        <file>image/victory.jpg</file>
+        <file>image/gold.png</file>
+        <file>image/star.png</file>
     </qresource>
 </RCC>

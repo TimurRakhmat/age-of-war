@@ -4,7 +4,8 @@
 #include <QGraphicsView>
 #include <QGraphicsObject>
 #include "button.h"
-#include "target.h"
+#include "user.h"
+#include "computer.h"
 #include "warrior.h"
 
 class GraphicsView : public QGraphicsView
@@ -13,32 +14,48 @@ class GraphicsView : public QGraphicsView
     QGraphicsScene *scene;
     QGraphicsItem *buttonParent;
     Button *exitBtn;
+    Button *pauseBtn;
     Button *addWarrior;
     Button *addArcher;
+    Button *addBArcher;
     Button *addKnight;
     QPixmap *game_bkgnd;
-    QPixmap skelet_image[4];
+    QGraphicsPixmapItem *star;
+    QGraphicsPixmapItem *coin;
     Warrior *warrior;
-    Target *target;
-    Target *qtarget;
-    QTimer *timer_set;
-    QTimer *timer_update;
-    QTimer *delay_timer;
-    bool push_check;
+    Player *player1;
+    Player *player2;
+    QGraphicsTextItem* labelHealph;
+    QGraphicsTextItem* labelExp;
+
+    QGraphicsTextItem* labelWar;
+    QGraphicsTextItem* labelArc;
 
 public:
     GraphicsView(QMainWindow *parent);
     ~GraphicsView();
+
+private:
+    void setButton();
+    void setLabel();
 
 public slots:
     void exitSlot();
     void setWarrior();
     void setKnight();
     void setArcher();
-    void delay_button();
+    void setBArcher();
+    void pause();
+
+    void victoryExit();
+    void defeatExit();
+
+    void reset_money_lable(int);
 
 signals:
     void exitSignal();
+    void victory();
+    void defeat();
 };
 
 #endif // GRAPHICSVIEW_H

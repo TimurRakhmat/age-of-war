@@ -20,6 +20,8 @@ class MainWindow : public QMainWindow
     QPushButton *btnExit;
     QPixmap *bkgnd;
     QPixmap *about;
+    QPixmap *def_img;
+    QPixmap *vic_img;
     QVBoxLayout* layout;
     GraphicsView *view;
     QSound *music;
@@ -31,11 +33,16 @@ public:
     void drawMenu();
     void drawAbout();
     void startGame();
+    void setVictory();
+    void setDefeat();
+    void setStyle(QPushButton* btn);
 
 public slots:
     void goToAbout();
     void goToMenu();
     void goToMenuFromGame();
+    void victory();
+    void defeat();
     void goToGame();
 
 private:
