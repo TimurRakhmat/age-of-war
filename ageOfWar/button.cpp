@@ -19,6 +19,11 @@ QPainterPath Button::shape() const
     return path;
 }
 
+void Button::set_pixmap(const QPixmap &pixmap)
+{
+    _pix = pixmap;
+}
+
 void Button::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     bool down = option->state & QStyle::State_Sunken;

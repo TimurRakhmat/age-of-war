@@ -64,6 +64,34 @@ private:
 
 };
 
+
+//class arrow for archer attack
+class MageBall : public QObject, public QGraphicsItem
+{
+    Q_OBJECT
+public:
+    explicit MageBall(QPointF point, bool target = true);
+    ~MageBall();
+
+signals:
+
+public slots:
+
+private slots:
+    void timeSlot();
+
+private:
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    QRectF boundingRect() const;
+
+private:
+    int speed;
+    int x0;
+    bool target;
+    QTimer *timer;
+
+};
+
 // make unit progress bar
 class ProgressBar : public QObject, public QGraphicsItem
 {

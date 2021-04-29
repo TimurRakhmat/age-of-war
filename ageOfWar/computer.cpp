@@ -10,7 +10,7 @@ int Cps = 3400;
 Computer::Computer() :
     Player()
 {
-    money = 400;
+    money = 1000;
     warrior_cost = 40;
     archer_cost = 55;
     brain_timer = new QTimer();
@@ -26,15 +26,6 @@ Computer::~Computer()
 int Computer::type() const
 {
     return Type;
-}
-
-
-void Computer::hit(int damage)
-{
-    health -= damage;   // Уменьшаем здоровье мишени
-    this->update(this->boundingRect());    // Перерисовываем мишень
-    // Если здоровье закончилось, то инициируем смерть мишени
-    if(health <= 0) this->deleteLater();
 }
 
 void Computer::stop()
@@ -66,11 +57,15 @@ void Computer::set_warrior()
     if (money < warrior_cost)
         return;
     money -= warrior_cost;
-    Warrior* wars = new Skelet(true);
+    Warrior* wars;
+    if (tir == 1)
+        wars = new Skelet_rigth();
+    else
+        wars = new Knight_right();
     connect(timer_update, &QTimer::timeout, wars, &Warrior::update_state);
     connect(timer_update_frame, &QTimer::timeout, wars, &Warrior::nextFrame);
     connect(wars, &Warrior::drop_money, this, &Player::unit_drop_money);
-    wars->setPos(x() - 20, y() + 185);
+    wars->setPos(x() - 20, y() + 165);
     scene()->addItem(wars);
 }
 
@@ -79,11 +74,14 @@ void Computer::set_archer()
     if (money < warrior_cost)
         return;
     money -= archer_cost;
-    Warrior* wars = new Archer_right(true);
+    Warrior* wars;
+    if (tir == 1)
+        wars = new Archer_right();
+    else
+        wars = new Wizard_right();
     connect(timer_update, &QTimer::timeout, wars, &Warrior::update_state);
     connect(timer_update_frame, &QTimer::timeout, wars, &Warrior::nextFrame);
     connect(wars, &Warrior::drop_money, this, &Player::unit_drop_money);
-    wars->setPos(x() - 20, y() + 185);
+    wars->setPos(x() - 20, y() + 165);
     scene()->addItem(wars);
 }
-

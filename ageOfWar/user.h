@@ -12,7 +12,6 @@ public:
     ~User();
     enum { Type = UserType + 3};
     int type() const;
-    void hit(int damage);
 
     int warrior_set_time = 2000;
     int archer_set_time = 2500;

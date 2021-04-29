@@ -11,19 +11,22 @@ Player::Player(QObject *parent) :
 
     health = 1000;
     maxHealth = health;            // Устанавливаем максимальное здоровье равным текущему
-    _pix = new QPixmap(":/image/Base.png");
+    _pix1 = new QPixmap(":/image/Base.png");
+    _pix2 = new QPixmap(":/image/Base2.png");
+    _pix = _pix1;
 }
 
 Player::~Player()
 {
-    delete _pix;
+    delete _pix1;
+    delete _pix2;
     delete timer_update;
     delete timer_update_frame;
 }
 
 QRectF Player::boundingRect() const
 {
-    return QRectF(0, 0,180,200);   // Ограничиваем область, в которой лежит цель
+    return QRectF(0, 0,180,200);
 }
 
 void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -41,14 +44,15 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 void Player::hit(int damage)
 {
-    health -= damage;   // Уменьшаем здоровье мишени
-    this->update(this->boundingRect());    // Перерисовываем мишень
-    // Если здоровье закончилось, то инициируем смерть мишени
-    if(health <= 0) {this->deleteLater();
-    if (this->type() == UserType + 4)
-        emit victory();
-    else
-        emit defeat();}
+    health -= damage;
+    this->update(this->boundingRect());
+
+    if(health <= 0) {
+        this->deleteLater();
+        if (this->type() == UserType + 4)
+            emit victory();
+        else
+            emit defeat();}
 
 }
 
@@ -73,4 +77,20 @@ void Player::set_money(int coins)
 {
     money += coins;
     exp += coins * 0.8;
+    if (tir == 1 && exp >= expToUprgade)
+    {
+        if (this->type() == UserType + 4)
+            set_tir();
+        else
+            emit tir_upgrade();
+    }
+}
+
+void Player::set_tir()
+{
+    tir = 2;
+    warrior_cost = 90;
+    archer_cost = 110;
+    _pix = _pix2;
+    update(this->boundingRect());
 }

@@ -16,7 +16,10 @@ public:
     ~Computer();
     enum { Type = UserType + 4};
     int type() const;
-    void hit(int damage);
+
+private:
+    void add_warrior();
+    void add_archer();
 
 signals:
 

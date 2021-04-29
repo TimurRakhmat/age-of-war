@@ -6,15 +6,15 @@ int cps = 80;
 Blood_smash::Blood_smash(QPointF point, QObject *parent) :
     QObject(parent), QGraphicsItem()
 {
-    this->setPos(point);    // Устанавливаем позицию взрыва
+    this->setPos(point);
+    this->setZValue(65);
     currentFrameX = 0;
     currentFrameY = 0;
     spriteImage = new QPixmap(":/image/blood.png");
 
-    timer = new QTimer();   /// Инициализируем таймер анимации взрыва
-    /// Подключаем сигнал от таймера к слоту анимации взрыва
+    timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Blood_smash::nextFrame);
-    timer->start(fps);   /// Стартуем таймер с частотой 25 милисекунд
+    timer->start(fps);
 }
 
 Blood_smash::~Blood_smash()
@@ -25,30 +25,29 @@ Blood_smash::~Blood_smash()
 
 QRectF Blood_smash::boundingRect() const
 {
-    return QRectF(0, 0, 1, 1);
+    return QRectF(-32, -48, 128, 128);
 }
 
 void Blood_smash::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    // Отрисовываем один из кадров взрыва
-    painter->drawPixmap(0, -48, *spriteImage, currentFrameX, currentFrameY, 96, 96);
+    painter->drawPixmap(-32, -48, *spriteImage, currentFrameX, currentFrameY, 128, 128);
     Q_UNUSED(option);
     Q_UNUSED(widget);
 }
 
 void Blood_smash::nextFrame()
 {
-    currentFrameX += 96; // Продвигаем координату X для выбора следующего кадра
+    currentFrameX += 128;
     if (currentFrameX >= spriteImage->width() && currentFrameY >= spriteImage->height()) {
-        this->deleteLater();    // Если кадры закончились, то удаляем объект взрыва
+        this->deleteLater();
     } else {
         if (currentFrameX >= spriteImage->width())
         {
             currentFrameX = 0;
-            currentFrameY += 96;
-        }    // В противном случае обновляем графический объект
+            currentFrameY += 128;
+        }
     }
-    this->update(0, -48, 96, 96);
+    this->update(-32, -48, 128, 128);
 }
 
 Arrow::Arrow(QPointF point, bool target)
@@ -62,8 +61,7 @@ Arrow::Arrow(QPointF point, bool target)
     else
         speed = -5;
 
-    timer = new QTimer();   /// Инициализируем таймер анимации взрыва
-    /// Подключаем сигнал от таймера к слоту анимации взрыва
+    timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Arrow::timeSlot);
     timer->start(fps);
 }
@@ -76,7 +74,7 @@ Arrow::~Arrow()
 void Arrow::timeSlot()
 {
     setPos(mapToParent(speed, 0));
-    this->update(0, 0, 7, 1);
+    this->update(0, 0, 7, 2);
     if (qAbs(x() - x0) > 180)
         this->deleteLater();
 
@@ -99,7 +97,7 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 {
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::black);
-    painter->drawRect(0,0,7,1);
+    painter->drawRect(0,0,7,2);
 
     Q_UNUSED(option);
     Q_UNUSED(widget);
@@ -107,7 +105,67 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 QRectF Arrow::boundingRect() const
 {
-    return QRectF(0, 0, 7, 1);
+    return QRectF(0, 0, 7, 2);
+}
+
+
+MageBall::MageBall(QPointF point, bool target)
+{
+    this->setPos(point);
+    x0 = point.x();
+
+    this->target = target;
+    if (target)
+        speed = 5;
+    else
+        speed = -5;
+
+    timer = new QTimer();   /// Инициализируем таймер анимации взрыва
+    /// Подключаем сигнал от таймера к слоту анимации взрыва
+    connect(timer, &QTimer::timeout, this, &MageBall::timeSlot);
+    timer->start(fps);
+}
+
+MageBall::~MageBall()
+{
+    delete timer;
+}
+
+void MageBall::timeSlot()
+{
+    setPos(mapToParent(speed, 0));
+    this->update(0, 0, 10, 10);
+    if (qAbs(x() - x0) > 180)
+        this->deleteLater();
+
+    QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
+                                                           << mapToScene(0, 0)
+                                                           << mapToScene(-1, -1)
+                                                           << mapToScene(1, -1));
+
+    foreach (QGraphicsItem *item, foundItems) {
+        if ((item->type() == (UserType + 2) || item->type() == (UserType + 4)) && target){
+            this->deleteLater();
+            return;}
+        if (((item->type() == (UserType + 1) || item->type() == (UserType + 3)) && !target)){
+            this->deleteLater();
+            return;}
+        }
+}
+
+void MageBall::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(Qt::magenta);
+    painter->drawEllipse(0,0,10,10);
+
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+}
+
+QRectF MageBall::boundingRect() const
+{
+    return QRectF(0, 0, 10, 10);
 }
 
 ProgressBar::ProgressBar(QPointF point, int time)

@@ -13,6 +13,8 @@ public:
 
     QPainterPath shape() const override;
 
+    void set_pixmap(const QPixmap &pixmap);
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *) override;
 
 signals:

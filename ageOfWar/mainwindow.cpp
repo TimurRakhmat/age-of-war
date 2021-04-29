@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     //this->setWindowState(Qt::WindowMaximized);
     music = new QSound(":/sound/menuSound.wav");
     music->setLoops(QSound::Infinite);
-    music->play();
+    //music->play();
     drawMenu();
     this->setWindowTitle("Age of War");
 
@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    music->stop();
+    //music->stop();
     delete music;
     delete ui;
     delete btnAbout;

@@ -5,13 +5,12 @@ static int randomBetween(int low, int high)
     return (qrand() % ((high + 1) - low) + low);
 }
 
-Warrior::Warrior(bool enemy, QObject *parent) :
+Warrior::Warrior(QObject *parent) :
     QObject(parent), QGraphicsItem()
 {
     money_drop = 42;
-    isEnemy = enemy;
-    speed = enemy ? -3 : 3;
-    scale = enemy ? -1 : 1;
+    speed = 3;
+    scale = 1;
     health = 700;
     maxHealth = health;
     currentFrame = 0;
@@ -28,6 +27,11 @@ Warrior::~Warrior()
     delete walk;
 }
 
+int Warrior::type() const
+{
+    return Type;
+}
+
 void Warrior::hit(int dmg)
 {
     health -= dmg;
@@ -37,21 +41,21 @@ void Warrior::hit(int dmg)
         emit drop_money(money_drop);
         deleteLater();
     }
-    update(0, -2, frame_step + 10, frameHeight + 5);
+    update(0, -2, 2 * frame_step + 10, 2 * frameHeight + 5);
 }
 
 QRectF Warrior::boundingRect() const
 {
-    return QRectF(0, 0,22,32);
+    return QRectF(0, 0, dx, dy);
 }
 
 void Warrior::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    painter->drawPixmap(0, 0, thatFrame->transformed(QTransform().scale(scale, 1)), currentFrame, 0, frame_step, 32);
+    painter->drawPixmap(0, 0, thatFrame->transformed(QTransform().scale(2 * scale, 2)), 2 * currentFrame, 0, 2 * frame_step, 2 * frameHeight);
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::red);
-    painter->drawRect(0, -2, (int) 21*health/maxHealth, 3);
+    painter->drawRect(0, -2, (int) dx*health/maxHealth, 3);
     Q_UNUSED(option);
     Q_UNUSED(widget);
 }
@@ -61,13 +65,18 @@ void Warrior::nextFrame()
     currentFrame += frame_step;
     if (currentFrame >= thatFrame->width())
         currentFrame = 0;
-    update(0, -2, frame_step + 10, frameHeight + 5);
+    update(0, -2, 2 * frame_step + 10, 2 * frameHeight + 5);
 }
 
-Skelet::Skelet(bool enemy) : Warrior(enemy)
+Skelet_rigth::Skelet_rigth() : Warrior()
 {
     money_drop = 42;
     dmg = 4;
+
+    dx = 22, dy = 32;
+
+    speed = -3;
+    scale = -1;
 
     atack = new QPixmap(":/image/skelet/Attack.png");
     dead = new QPixmap(":/image/skelet/Dead.png");
@@ -75,15 +84,16 @@ Skelet::Skelet(bool enemy) : Warrior(enemy)
     walk = new QPixmap(":/image/skelet/Walk.png");
 
     thatFrame = walk;
+
+    dx *= 2; dy *= 2;
 }
 
-
-int Skelet::type() const
+int Skelet_rigth::type() const
 {
     return Type;
 }
 
-void Skelet::update_state()
+void Skelet_rigth::update_state()
 {
     QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
                                                            << mapToScene(0, 0)
@@ -126,10 +136,15 @@ void Skelet::update_state()
     this->setX(this->x() + speed);
 }
 
-Skelet_left::Skelet_left(bool enemy) : Warrior(enemy)
+Skelet_left::Skelet_left() : Warrior()
 {
     money_drop = 42;
     dmg = 4;
+
+    dx = 22, dy = 32;
+
+    speed = 3;
+    scale = 1;
 
     atack = new QPixmap(":/image/skelet/Attack.png");
     dead = new QPixmap(":/image/skelet/Dead.png");
@@ -137,6 +152,7 @@ Skelet_left::Skelet_left(bool enemy) : Warrior(enemy)
     walk = new QPixmap(":/image/skelet/Walk.png");
 
     thatFrame = walk;
+    dx *= 2; dy *= 2;
 }
 
 
@@ -148,9 +164,9 @@ int Skelet_left::type() const
 void Skelet_left::update_state()
 {
     QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
-                                                           << mapToScene(22, 0)
-                                                           << mapToScene(22, 2)
-                                                           << mapToScene(32, 2));
+                                                           << mapToScene(dx, 0)
+                                                           << mapToScene(dx, 2)
+                                                           << mapToScene(dx + 10, 2));
     foreach (QGraphicsItem *item, foundItems) {
         if (item == this)
             continue;
@@ -185,15 +201,18 @@ void Skelet_left::update_state()
     this->setX(this->x() + speed);
 }
 
-Archer::Archer(bool enemy): Warrior(enemy)
+Archer_left::Archer_left(): Warrior()
 {
-    frame_step = 63;
     money_drop = 60;
     health = 200;
     maxHealth = health;
-    frameHeight = 46;
     dmg = 6;
     speed = 3;
+
+    frameHeight = 46;
+    frame_step = 63;
+    dx = 40, dy = 42;
+    scale = 1;
 
     atack = new QPixmap(":/image/archer/attack.png");
     dead = new QPixmap(":/image/archer/dead.png");
@@ -201,19 +220,20 @@ Archer::Archer(bool enemy): Warrior(enemy)
     walk = new QPixmap(":/image/archer/walk.png");
 
     thatFrame = walk;
+    dx *= 2; dy *= 2;
 }
 
-int Archer::type() const
+int Archer_left::type() const
 {
     return Type;
 }
 
-void Archer::update_state()
+void Archer_left::update_state()
 {
     QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
-                                                           << mapToScene(40, 0)
-                                                           << mapToScene(40, 20)
-                                                           << mapToScene(180, 2));
+                                                           << mapToScene(dx, 0)
+                                                           << mapToScene(dx, 20)
+                                                           << mapToScene(dx + 140, 2));
 
     QGraphicsItem* temp_item;
     int min_dist = 2000;
@@ -250,7 +270,9 @@ void Archer::update_state()
             Player* temp = qgraphicsitem_cast <Player *> (temp_item);
             temp->hit(randomBetween(dmg - 3, dmg));
         }
-        scene()->addItem(new Arrow(QPointF(x() + 40, y() + 18)));
+
+        if (!randomBetween(0, 8))
+        scene()->addItem(new Arrow(QPointF(x() + dx, y() + dy * 0.45)));
         thatFrame = atack;
         frame_step = 63;
         return;
@@ -267,31 +289,18 @@ void Archer::update_state()
     this->setX(this->x() + speed);
 }
 
-void Archer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+Archer_right::Archer_right(): Warrior()
 {
-    painter->drawPixmap(0, 0, *thatFrame, currentFrame, 0, frame_step - 5, 42);
-
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(Qt::red);
-    painter->drawRect(0, -1, (int) 21*health/maxHealth, 3);
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-}
-
-QRectF Archer::boundingRect() const
-{
-    return QRect(0, 0, 40, 42);
-}
-
-Archer_right::Archer_right(bool enemy): Warrior(enemy)
-{
-    frame_step = 63;
     money_drop = 60;
     health = 200;
     maxHealth = health;
-    frameHeight = 46;
-    speed = -3;
     dmg = 6;
+    speed = -3;
+
+    frameHeight = 46;
+    frame_step = 63;
+    dx = 40, dy = 42;
+    scale = -1;
 
     atack = new QPixmap(":/image/archer/attack.png");
     dead = new QPixmap(":/image/archer/dead.png");
@@ -299,6 +308,7 @@ Archer_right::Archer_right(bool enemy): Warrior(enemy)
     walk = new QPixmap(":/image/archer/walk.png");
 
     thatFrame = walk;
+    dx *= 2; dy *= 2;
 }
 
 int Archer_right::type() const
@@ -350,7 +360,8 @@ void Archer_right::update_state()
             temp->hit(randomBetween(dmg - 3, dmg));
         }
 
-        scene()->addItem(new Arrow(QPointF(x(), y() + 18) , false));
+        if (!randomBetween(0, 8))
+        scene()->addItem(new Arrow(QPointF(x(), y() + dy * 0.45) , false));
 
         thatFrame = atack;
         frame_step = 63;
@@ -369,18 +380,320 @@ void Archer_right::update_state()
     this->setX(this->x() + speed);
 }
 
-void Archer_right::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+Knight_left::Knight_left(): Warrior()
 {
-    painter->drawPixmap(0, 0, thatFrame->transformed(QTransform().scale(-1, 1)), currentFrame, 0, frame_step - 5, 42);
+    money_drop = 85;
+    health = 900;
+    maxHealth = health;
+    dmg = 9;
+    speed = 3;
 
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(Qt::red);
-    painter->drawRect(0, -1, (int) 21*health/maxHealth, 3);
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
+    frameHeight = 42;
+    frame_step = 42;
+    dx = 22, dy = 42;
+    scale = 1;
+
+    atack = new QPixmap(":/image/knight/attack.png");
+    dead = new QPixmap(":/image/knight/dead.png");
+    idle = new QPixmap(":/image/knight/idle.png");
+    walk = new QPixmap(":/image/knight/walk.png");
+
+    thatFrame = walk;
+    dx *= 2; dy *= 2;
 }
 
-QRectF Archer_right::boundingRect() const
+int Knight_left::type() const
 {
-    return QRect(0, 0, 40, 42);
+    return Type;
+}
+
+void Knight_left::update_state()
+{
+    QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
+                                                           << mapToScene(dx, 0)
+                                                           << mapToScene(dx, 2)
+                                                           << mapToScene(dx + 14, 2));
+    foreach (QGraphicsItem *item, foundItems) {
+        if (item == this)
+            continue;
+
+        if (item->type() == UserType + 2)
+        {
+            Warrior* temp = qgraphicsitem_cast <Warrior *> (item);
+            temp->hit(randomBetween(dmg - 1, dmg + 1));
+            thatFrame = atack;
+            frame_step = 80;
+            return;
+        }
+
+        if (item->type() == UserType + 4)
+        {
+            Player* temp = qgraphicsitem_cast <Player *> (item);
+            temp->hit(randomBetween(dmg - 2, dmg));
+            thatFrame = atack;
+            frame_step = 80;
+            return;
+        }
+
+        if (item->type() == UserType + 1)
+        {
+            thatFrame = idle;
+            frame_step = 42;
+            return;
+        }
+    }
+    thatFrame = walk;
+    frame_step = 42;
+    this->setX(this->x() + speed);
+}
+
+
+Knight_right::Knight_right(): Warrior()
+{
+    money_drop = 85;
+    health = 900;
+    maxHealth = health;
+    dmg = 9;
+    speed = -3;
+
+    frameHeight = 42;
+    frame_step = 42;
+    dx = 22, dy = 42;
+    scale = -1;
+
+    atack = new QPixmap(":/image/knight/attack.png");
+    dead = new QPixmap(":/image/knight/death.png");
+    idle = new QPixmap(":/image/knight/idle.png");
+    walk = new QPixmap(":/image/knight/walk.png");
+
+    thatFrame = walk;
+    dx *= 2; dy *= 2;
+}
+
+int Knight_right::type() const
+{
+    return Type;
+}
+
+void Knight_right::update_state()
+{
+    QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
+                                                           << mapToScene(0, 0)
+                                                           << mapToScene(0, 2)
+                                                           << mapToScene(-14, 2));
+
+
+    foreach (QGraphicsItem *item, foundItems) {
+        if (item == this)
+            continue;
+
+        if (item->type() == UserType + 1)
+        {
+            thatFrame = atack;
+            frame_step = 80;
+            Warrior* temp = qgraphicsitem_cast <Warrior *> (item);
+            temp->hit(randomBetween(dmg - 1, dmg + 1));
+            return;
+        }
+
+        if (item->type() == UserType + 3)
+        {
+            thatFrame = atack;
+            Player* temp = qgraphicsitem_cast <Player *> (item);
+            temp->hit(randomBetween(dmg - 2, dmg));
+            frame_step = 80;
+            return;
+        }
+
+        if (item->type() == UserType + 2)
+        {
+            thatFrame = idle;
+            frame_step = 42;
+            return;;
+        }
+    }
+
+    frame_step = 42;
+    thatFrame = walk;
+    this->setX(this->x() + speed);
+}
+
+
+Wizard_left::Wizard_left(): Warrior()
+{
+    money_drop = 115;
+    health = 300;
+    maxHealth = health;
+    dmg = 8;
+    speed = 3;
+
+    frameHeight = 43;
+    frame_step = 116;
+    dx = 40, dy = 42;
+    scale = 1;
+
+    atack = new QPixmap(":/image/wizard/attack.png");
+    dead = new QPixmap(":/image/wizard/death.png");
+    idle = new QPixmap(":/image/wizard/idle.png");
+    walk = new QPixmap(":/image/wizard/walk.png");
+
+    thatFrame = walk;
+    dx *= 2; dy *= 2;
+}
+
+int Wizard_left::type() const
+{
+    return Type;
+}
+
+void Wizard_left::update_state()
+{
+    QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
+                                                           << mapToScene(dx, 0)
+                                                           << mapToScene(dx, 20)
+                                                           << mapToScene(dx + 140, 2));
+
+    QGraphicsItem* temp_item;
+    int min_dist = 2000;
+    bool stop = false;
+
+    foreach (QGraphicsItem *item, foundItems) {
+        if (item == this)
+            continue;
+
+        if (item->type() == UserType + 2 || item->type() == UserType + 4)
+        {
+            if (item->x() < min_dist)
+            {
+                min_dist = item->x();
+                temp_item = item;
+            }
+        }
+
+        if (item->type() == UserType + 1 && item->x() - x() < 50)
+        {
+            stop = true;
+        }
+    }
+
+    if (min_dist < 2000)
+    {
+        if (temp_item->type() == UserType + 2)
+        {
+            Warrior* temp = qgraphicsitem_cast <Warrior *> (temp_item);
+            temp->hit(randomBetween(dmg - 2, dmg + 1));
+        }
+        else
+        {
+            Player* temp = qgraphicsitem_cast <Player *> (temp_item);
+            temp->hit(randomBetween(dmg - 3, dmg));
+        }
+        if (!randomBetween(0, 12))
+            scene()->addItem(new MageBall(QPointF(x() + dx, y() + dy * 0.3)));
+        thatFrame = atack;
+        frame_step = 116;
+        return;
+    }
+
+    if (stop)
+    {
+        thatFrame = idle;
+        frame_step = 111;
+        return;
+    }
+    thatFrame = walk;
+    frame_step = 116;
+    this->setX(this->x() + speed);
+}
+
+
+Wizard_right::Wizard_right(): Warrior()
+{
+    money_drop = 115;
+    health = 300;
+    maxHealth = health;
+    dmg = 6;
+    speed = -3;
+
+    frameHeight = 43;
+    frame_step = 116;
+    dx = 40, dy = 42;
+    scale = 1;
+
+    atack = new QPixmap(":/image/wizard/attackrev.png");
+    dead = new QPixmap(":/image/wizard/death.png");
+    idle = new QPixmap(":/image/wizard/idlerev.png");
+    walk = new QPixmap(":/image/wizard/walkrev.png");
+
+    thatFrame = walk;
+    dx *= 2; dy *= 2;
+}
+
+int Wizard_right::type() const
+{
+    return Type;
+}
+
+void Wizard_right::update_state()
+{
+    QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
+                                                           << mapToScene(0, 0)
+                                                           << mapToScene(0, 20)
+                                                           << mapToScene(-140, 2));
+
+    QGraphicsItem* temp_item;
+    int min_dist = -200;
+    bool stop = false;
+
+    foreach (QGraphicsItem *item, foundItems) {
+        if (item == this)
+            continue;
+
+        if (item->type() == UserType + 1 || item->type() == UserType + 3)
+        {
+            if (item->x() > min_dist)
+            {
+                min_dist = item->x();
+                temp_item = item;
+            }
+        }
+
+        if (item->type() == UserType + 2 && x() - item->x() < 50)
+        {
+            stop = true;
+        }
+    }
+
+    if (min_dist > -200)
+    {
+
+        if (temp_item->type() == UserType + 1)
+        {
+            Warrior* temp = qgraphicsitem_cast <Warrior *> (temp_item);
+            temp->hit(randomBetween(dmg - 2, dmg + 1));
+        }
+        else
+        {
+            Player* temp = qgraphicsitem_cast <Player *> (temp_item);
+            temp->hit(randomBetween(dmg - 3, dmg));
+        }
+
+        if (!randomBetween(0, 12))
+            scene()->addItem(new MageBall(QPointF(x(), y() + dy * 0.3) , false));
+
+        thatFrame = atack;
+        frame_step = 116;
+        return;
+    }
+
+    if (stop)
+    {
+        thatFrame = idle;
+        frame_step = 111;
+        return;
+    }
+
+    thatFrame = walk;
+    frame_step = 116;
+    this->setX(this->x() + speed);
 }

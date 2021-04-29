@@ -15,10 +15,11 @@ class GraphicsView : public QGraphicsView
     QGraphicsItem *buttonParent;
     Button *exitBtn;
     Button *pauseBtn;
-    Button *addWarrior;
     Button *addArcher;
-    Button *addBArcher;
     Button *addKnight;
+
+    Button *tirUpgr;
+
     QPixmap *game_bkgnd;
     QGraphicsPixmapItem *star;
     QGraphicsPixmapItem *coin;
@@ -41,16 +42,16 @@ private:
 
 public slots:
     void exitSlot();
-    void setWarrior();
     void setKnight();
     void setArcher();
-    void setBArcher();
     void pause();
 
     void victoryExit();
     void defeatExit();
 
+    void reset_tir_label();
     void reset_money_lable(int);
+    void set_tir_btn();
 
 signals:
     void exitSignal();

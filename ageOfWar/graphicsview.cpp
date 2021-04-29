@@ -4,6 +4,7 @@
 
 GraphicsView::GraphicsView(QMainWindow *parent): QGraphicsView(parent)
 {
+    qsrand(time(0));
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, "AgeOfWar"));
@@ -34,8 +35,11 @@ GraphicsView::GraphicsView(QMainWindow *parent): QGraphicsView(parent)
     connect(player1, &Player::defeat, this, &GraphicsView::defeatExit);
 
     connect(player1, &Player::unit_death, player2, &Player::set_money);
-    connect(player2, &Player::unit_death, this, &GraphicsView::reset_money_lable);
     connect(player2, &Player::unit_death, player1, &Player::set_money);
+
+    connect(player2, &Player::unit_death, this, &GraphicsView::reset_money_lable);
+
+    connect(player1, &Player::tir_upgrade, this, &GraphicsView::set_tir_btn);
 
     setLabel();
     setButton();
@@ -54,10 +58,6 @@ void GraphicsView::setButton()
     exitBtn = new Button(QPixmap(":/image/menu.png"), buttonParent);
     connect(exitBtn, &Button::pressed, this, &GraphicsView::exitSlot);
     exitBtn->setPos(0, 0);
-
-    addWarrior = new Button(QPixmap(":/image/skelet/Skeleton.png").transformed(QTransform().scale(-1, 1)), buttonParent);
-    connect(addWarrior, &Button::pressed, this, &GraphicsView::setWarrior);
-    addWarrior->setPos(-100, 100);
 
     addKnight = new Button(QPixmap(":/image/skelet/Skeleton.png"), buttonParent);
     connect(addKnight, &Button::pressed, this, &GraphicsView::setKnight);
@@ -82,10 +82,6 @@ void GraphicsView::setButton()
     text = QString::number(player1->archer_cost);
     labelArc->setPlainText(text);
     labelArc->setPos(-210, 20);
-
-    addBArcher = new Button(QPixmap(":/image/archer/icon.png").transformed(QTransform().scale(-1, 1)), buttonParent);
-    connect(addBArcher, &Button::pressed, this, &GraphicsView::setBArcher);
-    addBArcher->setPos(-200, 100);
 
     scene->addItem(buttonParent);
     buttonParent->setPos(width() - 100, 50);
@@ -121,13 +117,6 @@ void GraphicsView::setLabel()
     scene->addItem(labelExp);
 }
 
-void GraphicsView::setWarrior()
-{
-    player2->set_warrior();
-    QString text = QString::number(player2->money);
-    labelExp->setPlainText(text);
-}
-
 void GraphicsView::setKnight()
 {
     player1->set_warrior();
@@ -140,13 +129,6 @@ void GraphicsView::setArcher()
     player1->set_archer();
     QString text = QString::number(player1->money);
     labelHealph->setPlainText(text);
-}
-
-void GraphicsView::setBArcher()
-{
-    player2->set_archer();
-    QString text = QString::number(player2->money);
-    labelExp->setPlainText(text);
 }
 
 void GraphicsView::pause()
@@ -168,12 +150,36 @@ void GraphicsView::defeatExit()
     emit defeat();
 }
 
+void GraphicsView::reset_tir_label()
+{
+    QString text = QString::number(player1->archer_cost);
+    labelArc->setPlainText(text);
+
+    text = QString::number(player1->warrior_cost);
+    labelWar->setPlainText(text);
+
+    addArcher->set_pixmap(QPixmap(":/image/wizard/icon.png"));
+    addKnight->set_pixmap(QPixmap(":/image/knight/icon.png"));
+    addKnight->update(addKnight->boundingRect());
+    addArcher->update(addArcher->boundingRect());
+    sender()->deleteLater();
+}
+
 void GraphicsView::reset_money_lable(int)
 {
     QString text = QString::number(player1->money);
     labelHealph->setPlainText(text);
     text = QString::number(player1->exp);
     labelExp->setPlainText(text);
+}
+
+void GraphicsView::set_tir_btn()
+{
+    tirUpgr = new Button(QPixmap(":/image/star.png"), buttonParent);
+    connect(tirUpgr, &Button::pressed, player1, &Player::set_tir);
+    connect(tirUpgr, &Button::pressed, this, &GraphicsView::reset_tir_label);
+    //connect(tirUpgr, &Button::pressed, tirUpgr, &Button::deleteLater);
+    tirUpgr->setPos(-1600, 100);
 }
 
 void GraphicsView::exitSlot()

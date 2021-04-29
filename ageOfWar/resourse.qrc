@@ -20,16 +20,32 @@
         <file>image/archer/walk.png</file>
         <file>image/pause.png</file>
         <file>image/blood.png</file>
-        <file>image/moto.jpg</file>
         <file>image/moto_cenz.jpg</file>
         <file>image/defeat.png</file>
         <file>image/Eren.jpg</file>
         <file>image/gipo.jpg</file>
         <file>image/bckg2.jpg</file>
-        <file>image/bckg3.jpg</file>
         <file>image/bckg.jpg</file>
         <file>image/victory.jpg</file>
         <file>image/gold.png</file>
         <file>image/star.png</file>
+        <file>image/knight/attack.png</file>
+        <file>image/knight/death.png</file>
+        <file>image/knight/idle.png</file>
+        <file>image/knight/knig.png</file>
+        <file>image/knight/walk.png</file>
+        <file>image/wizard/attack.png</file>
+        <file>image/wizard/death.png</file>
+        <file>image/wizard/Fall.png</file>
+        <file>image/wizard/Hit.png</file>
+        <file>image/wizard/idle.png</file>
+        <file>image/wizard/Jump.png</file>
+        <file>image/wizard/walk.png</file>
+        <file>image/wizard/icon.png</file>
+        <file>image/knight/icon.png</file>
+        <file>image/Base2.png</file>
+        <file>image/wizard/attackrev.png</file>
+        <file>image/wizard/idlerev.png</file>
+        <file>image/wizard/walkrev.png</file>
     </qresource>
 </RCC>

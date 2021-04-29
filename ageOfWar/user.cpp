@@ -20,34 +20,34 @@ int User::type() const
     return Type;
 }
 
-void User::hit(int damage)
-{
-    health -= damage;   // Уменьшаем здоровье мишени
-    this->update(this->boundingRect());    // Перерисовываем мишень
-    // Если здоровье закончилось, то инициируем смерть мишени
-    if(health <= 0) this->deleteLater();
-}
-
 void User::add_warrior()
 {
     add_time = true;
-    Warrior* wars = new Skelet_left();
+    Warrior* wars;
+    if (tir == 1)
+        wars = new Skelet_left();
+    else
+        wars = new Knight_left();
     connect(timer_update, &QTimer::timeout, wars, &Warrior::update_state);
     connect(timer_update_frame, &QTimer::timeout, wars, &Warrior::nextFrame);
     connect(wars, &Warrior::drop_money, this, &Player::unit_drop_money);
     scene()->addItem(wars);
-    wars->setPos(x() + 150, y() + 185);
+    wars->setPos(x() + 150, y() + 165);
 }
 
 void User::add_archer()
 {
     add_time = true;
-    Warrior* wars = new Archer();
+    Warrior* wars;
+    if (tir == 1)
+        wars = new Archer_left();
+    else
+        wars = new Wizard_left();
     connect(timer_update, &QTimer::timeout, wars, &Warrior::update_state);
     connect(timer_update_frame, &QTimer::timeout, wars, &Warrior::nextFrame);
     connect(wars, &Warrior::drop_money, this, &Player::unit_drop_money);
     scene()->addItem(wars);
-    wars->setPos(x() + 150, y() + 185);
+    wars->setPos(x() + 150, y() + 165);
 }
 
 void User::set_warrior()
